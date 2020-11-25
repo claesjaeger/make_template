@@ -4,8 +4,21 @@
 # https://blog.melski.net/2010/11/30/makefile-hacks-print-the-value-of-any-variable/
 # https://stackoverflow.com/questions/7004702/how-can-i-create-a-makefile-for-c-projects-with-src-obj-and-bin-subdirectories
 
+# Select Cor C++. [c, c++]
+PROJECT = c
+# define the executable file 
+MAIN = weathercollect
+
+# define the C compiler to use and file extention
+ifeq ($(PROJECT),c++)
+        CC = g++
+        FILEEXT = cpp
+else
+        CC = gcc
+        FILEEXT = c
+endif
 # define the C compiler to use
-CC = gcc
+#CC = g++
 
 # define any compile-time flags
 CFLAGS = -Wall -g
@@ -30,14 +43,12 @@ BINDIR = ./bin
 
 # define the C source files
 #SRCS = weathercollect.c weatherfunc.c
-SRCS = $(wildcard $(SRCDIR)/*.c)
+#SRCS = $(wildcard $(SRCDIR)/*.c)
+SRCS = $(wildcard $(SRCDIR)/*.$(FILEEXT))
 #SRCS = $(SRCDIR)/%.c
 
-# define the C object files 
-OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
-
-# define the executable file 
-MAIN = weathercollect
+# define the object files 
+OBJS = $(SRCS:$(SRCDIR)/%.$(FILEEXT)=$(OBJDIR)/%.o)
 
 #
 # The following part of the makefile is generic; it can be used to 
@@ -58,7 +69,7 @@ $(MAIN):	$(OBJS)
 # the rule(a .c file) and $@: the name of the target of the rule (a .o file) 
 # (see the gnu make manual section about automatic variables)
 #.c.o:
-$(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
+$(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.$(FILEEXT)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
 	@echo "Compiled "$<" successfully!"
 
